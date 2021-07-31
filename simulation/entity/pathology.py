@@ -4,29 +4,23 @@ import random
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from entity.state import PathologyState, SubjectState
+from simulation.settings import PathologySettings, SubjectSettings
+from simulation.entity.state import PathologyState, SubjectState
 
 if TYPE_CHECKING:
-    from entity.subject import Subject
+    from simulation.entity.subject import Subject
 
 
 class PathologyABC(ABC):
     _days_settled: int = 0
 
-    def __init__(
-            self,
-            subject: Subject,
-            infection_prob_percentage: float,
-            death_prob_percentage: float,
-            max_exposed_days: int,
-            max_infectious_days: int
-    ):
+    def __init__(self, subject: Subject):
         self.subject = subject
         self.state = PathologyState.EXPOSED
-        self.infection_prob_percentage = float(infection_prob_percentage)
-        self.death_prob_percentage = float(death_prob_percentage)
-        self.max_exposed_days = int(max_exposed_days)
-        self.max_infectious_days = int(max_infectious_days)
+        self.infection_prob_percentage = float(PathologySettings.INFECTION_PROB_PERCENTAGE)
+        self.death_prob_percentage = float(PathologySettings.DEATH_PROB_PERCENTAGE)
+        self.max_exposed_days = int(PathologySettings.MAX_EXPOSED_DAYS)
+        self.max_infectious_days = int(PathologySettings.MAX_INFECTIOUS_DAYS)
 
     @abstractmethod
     def infect(self, subject: Subject) -> bool:
@@ -72,7 +66,7 @@ class PathologyABC(ABC):
 class NullPathology(PathologyABC):
 
     def __init__(self, subject: Subject):
-        super().__init__(subject, 0, 0, 0, 0)
+        super().__init__(subject)
         self.state = PathologyState.SUSCETIBLE
 
     def infect(self, subject: Subject) -> bool:
@@ -82,20 +76,14 @@ class NullPathology(PathologyABC):
         return False
 
     def progress(self):
-        """Consider one day was passed. Evolve pathology"""
+        pass
 
 
 class ConcretePathology(PathologyABC):
 
     def infect(self, subject: Subject) -> bool:
         if self.should_be_infected(subject):
-            subject.disease = ConcretePathology(
-                subject,
-                self.infection_prob_percentage,
-                self.death_prob_percentage,
-                self.max_exposed_days,
-                self.max_infectious_days
-            )
+            subject.disease = ConcretePathology(subject)
             subject.state = SubjectState.SICK
             return True
         return False
@@ -146,7 +134,7 @@ class ConcretePathology(PathologyABC):
         if self.subject.state in (SubjectState.OK, SubjectState.DEAD) or self.subject.disease.state == PathologyState.SUSCETIBLE:
             return False
 
-        prob = (self.subject.age * self.death_prob_percentage) / 100  # considering that people only live 100 years
+        prob = (self.subject.age * self.death_prob_percentage) / SubjectSettings.LIFE_EXPECTANCY  # considering that people only live 100 years
 
         if random.random() <= prob:
             return True

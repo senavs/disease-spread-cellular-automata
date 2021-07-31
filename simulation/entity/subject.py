@@ -1,5 +1,8 @@
-from entity.pathology import PathologyABC, NullPathology
-from entity.state import SubjectState, PathologyState, DrawColors
+import numpy as np
+
+from simulation.settings import SubjectSettings
+from simulation.entity.pathology import PathologyABC, NullPathology
+from simulation.entity.state import SubjectState, PathologyState, DrawColors
 
 
 class Subject:
@@ -12,8 +15,8 @@ class Subject:
         setattr(cls, '__counter', instance.id + 1)
         return instance
 
-    def __init__(self, age: int):
-        self.age = int(age)
+    def __init__(self):
+        self.age = int(np.random.uniform(SubjectSettings.MIN_AGE, SubjectSettings.MAX_AGE, 1))
         self.state = SubjectState.OK
         self.disease: PathologyABC = NullPathology(self)
 

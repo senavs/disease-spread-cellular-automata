@@ -1,5 +1,4 @@
-from entity.generation import Generation
+from simulation.entity.time import Time
 
-with Generation(100) as gen:
-    # print(gen.board)
-    gen.draw()
+with Time() as time:
+    time.process()
