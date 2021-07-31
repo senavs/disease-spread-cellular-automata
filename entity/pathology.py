@@ -65,8 +65,8 @@ class PathologyABC(ABC):
             - Set subject to OK if the disease passed the limit days and the subject still alive
         """
 
-    # def __str__(self):
-    #     return f'Pathology({self.state})'
+    def __str__(self):
+        return f'Pathology({self.state})'
 
 
 class NullPathology(PathologyABC):
