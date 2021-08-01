@@ -20,35 +20,33 @@ class Time:
 
     def create_board(self):
         self.board = np.array([Subject() for _ in range(self.dimension * self.dimension)])
+        self.board = self.board.reshape((self.dimension, self.dimension))
 
     def set_sick_subject(self):
         location = BoardSettings.SICK_SUBJECT_LOCATION
         if location is None:
-            location = self.board.size // 2
+            location = self.board.shape[0] // 2
 
-        subject = self.board[location]
+        subject = self.board[location, location]
         subject.disease = ConcretePathology(subject)
         subject.state = SubjectState.INFECTIOUS
 
     def draw(self) -> np.ndarray:
-        draw_board = np.array([subject.draw() for subject in self.board], dtype=int)
-        draw_board = draw_board.reshape((self.dimension, self.dimension, 3))
+        func = np.frompyfunc(lambda subject: subject.draw(), 1, 1)
+
+        draw_board = np.array(func(self.board).tolist())
         draw_board = draw_board.astype(np.uint8)
 
         plt.imshow(draw_board)
         # plt.imsave(f'{SystemSettings.IMAGE_OUTPUT_PATH}/{self.current_time:0<5}.png', draw_board)
         return draw_board
 
-    def get_neighbours(self, index: int) -> list:
-        board_2d = self.board.reshape((self.dimension, self.dimension))
-        x = index % self.dimension
-        y = index // self.dimension
-
+    def get_neighbours(self, x: int, y: int) -> list:
         # Algorithm from https://stackoverflow.com/questions/51657128/how-to-access-the-adjacent-cells-of-each-elements-of-matrix-in-python
         neighbours = np.concatenate(list(row[y - (y > 0): y + 2]
-                                         for row in board_2d[x - (x > 0):x + 2]))
+                                         for row in self.board[x - (x > 0):x + 2]))
         neighbours = neighbours.tolist()
-        neighbours.remove(board_2d[x][y])  # noqa
+        neighbours.remove(self.board[x][y])  # noqa
         return neighbours  # noqa
 
     def progress(self):
@@ -56,11 +54,11 @@ class Time:
             self.current_time += 1
             self.draw()
 
-            for index, subject in enumerate(self.board):
-                neighbours = self.get_neighbours(index)
-                subject.contact(neighbours)
-                subject.disease.progress()
-        self.draw()
+            for x, row in enumerate(self.board):
+                for y, subject in enumerate(row):
+                    neighbours = self.get_neighbours(x, y)
+                    subject.contact(neighbours)
+                    subject.disease.progress()
 
     def __enter__(self) -> 'Time':
         return self

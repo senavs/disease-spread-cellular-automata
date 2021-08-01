@@ -1,7 +1,5 @@
 from enum import Enum
 
-import numpy as np
-
 
 class SubjectState(str, Enum):
     NORMAL: str = 'NORMAL'
@@ -12,9 +10,9 @@ class SubjectState(str, Enum):
 
 
 draw_colors = {
-    'NORMAL': np.array([255, 255, 255]),
-    'EXPOSED': np.array([200, 100, 0]),
-    'INFECTIOUS': np.array([150, 0, 0]),
-    'HEALED': np.array([0, 255, 0]),
-    'DEAD': np.array([0, 0, 0]),
+    'NORMAL': [255, 255, 255],
+    'EXPOSED': [200, 100, 0],
+    'INFECTIOUS': [150, 0, 0],
+    'HEALED': [0, 255, 0],
+    'DEAD': [0, 0, 0],
 }
