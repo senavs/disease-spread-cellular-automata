@@ -2,7 +2,7 @@ import numpy as np
 
 from simulation.settings import SubjectSettings
 from simulation.entity.pathology import PathologyABC, NullPathology
-from simulation.entity.state import SubjectState, PathologyState, DrawColors
+from simulation.entity.state import SubjectState, draw_colors
 
 
 class Subject:
@@ -17,7 +17,7 @@ class Subject:
 
     def __init__(self):
         self.age = int(np.random.uniform(SubjectSettings.MIN_AGE, SubjectSettings.MAX_AGE, 1))
-        self.state = SubjectState.OK
+        self.state = SubjectState.NORMAL
         self.disease: PathologyABC = NullPathology(self)
 
     def contact(self, subjects: list['Subject']):
@@ -27,17 +27,7 @@ class Subject:
             self.disease.infect(subject)
 
     def draw(self):
-        if self.state == SubjectState.OK:
-            if self.disease.state == PathologyState.REMOVED:
-                return DrawColors.HEALED
-            return DrawColors.NORMAL
-        elif self.state == SubjectState.SICK:
-            if self.disease.state == PathologyState.EXPOSED:
-                return DrawColors.EXPOSED
-            elif self.disease.state == PathologyState.INFECTIOUS:
-                return DrawColors.INFECTIOUS
-        elif self.state == SubjectState.DEAD:
-            return DrawColors.DEAD
+        return draw_colors[self.state]
 
     def __str__(self):
         return f'Subject({self.id}, {self.age}, {self.state}, {self.disease})'

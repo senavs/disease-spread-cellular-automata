@@ -10,13 +10,13 @@ class SystemSettings:
 
 class PathologySettings:
     INFECTION_PROB_PERCENTAGE: float = 0.15
-    DEATH_PROB_PERCENTAGE: float = 1
+    DEATH_PROB_PERCENTAGE: float = 0.05
     MAX_EXPOSED_DAYS: float = 6
     MAX_INFECTIOUS_DAYS: float = 14
 
 
 class BoardSettings:
-    DIMENSION: int = 9
+    DIMENSION: int = 12
     SICK_SUBJECT_LOCATION: int = None  # None is the center. It's like board[4, 4] position (with board 9 dimension)
 
 

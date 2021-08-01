@@ -4,21 +4,17 @@ import numpy as np
 
 
 class SubjectState(str, Enum):
-    OK: str = 'OK'
-    SICK: str = 'SICK'
+    NORMAL: str = 'NORMAL'
+    EXPOSED: str = 'EXPOSED'
+    INFECTIOUS: str = 'INFECTIOUS'
+    HEALED: str = 'HEALED'
     DEAD: str = 'DEAD'
 
 
-class PathologyState(str, Enum):
-    SUSCETIBLE: str = 'SUSCETIBLE'
-    EXPOSED: str = 'EXPOSED'
-    INFECTIOUS: str = 'INFECTIOUS'
-    REMOVED: str = 'REMOVED'
-
-
-class DrawColors:
-    NORMAL: list[int] = np.array([255, 255, 255])
-    EXPOSED: list[int] = np.array([255, 255, 0])
-    INFECTIOUS: list[int] = np.array([200, 0, 0])
-    HEALED: list[int] = np.array([0, 255, 0])
-    DEAD: list[int] = np.array([0, 0, 0])
+draw_colors = {
+    'NORMAL': np.array([255, 255, 255]),
+    'EXPOSED': np.array([200, 100, 0]),
+    'INFECTIOUS': np.array([150, 0, 0]),
+    'HEALED': np.array([0, 255, 0]),
+    'DEAD': np.array([0, 0, 0]),
+}

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from simulation.settings import SystemSettings, BoardSettings
 from simulation.entity.pathology import ConcretePathology
-from simulation.entity.state import PathologyState, SubjectState
+from simulation.entity.state import SubjectState
 from simulation.entity.subject import Subject
 
 
@@ -28,8 +28,7 @@ class Time:
 
         subject = self.board[location]
         subject.disease = ConcretePathology(subject)
-        subject.disease.state = PathologyState.INFECTIOUS
-        subject.state = SubjectState.SICK
+        subject.state = SubjectState.INFECTIOUS
 
     def draw(self) -> np.ndarray:
         draw_board = np.array([subject.draw() for subject in self.board], dtype=int)
@@ -39,9 +38,6 @@ class Time:
         plt.imshow(draw_board)
         # plt.imsave(f'{SystemSettings.IMAGE_OUTPUT_PATH}/{self.current_time:0<5}.png', draw_board)
         return draw_board
-
-    def filter_exposed(self) -> list:
-        return list(filter(lambda subject: subject.disease.state in (PathologyState.EXPOSED, PathologyState.INFECTIOUS), self.board))
 
     def get_neighbours(self, index: int) -> list:
         board_2d = self.board.reshape((self.dimension, self.dimension))
@@ -56,7 +52,7 @@ class Time:
         return neighbours  # noqa
 
     def progress(self):
-        while self.filter_exposed():
+        while True:
             self.current_time += 1
             self.draw()
 

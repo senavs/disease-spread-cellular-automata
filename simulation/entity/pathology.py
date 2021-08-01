@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from simulation.settings import PathologySettings, SubjectSettings
-from simulation.entity.state import PathologyState, SubjectState
+from simulation.entity.state import SubjectState
 
 if TYPE_CHECKING:
     from simulation.entity.subject import Subject
@@ -15,7 +15,6 @@ class PathologyABC(ABC):
 
     def __init__(self, subject: Subject):
         self.subject = subject
-        self.state = PathologyState.EXPOSED
         self.infection_prob_percentage = float(PathologySettings.INFECTION_PROB_PERCENTAGE)
         self.death_prob_percentage = float(PathologySettings.DEATH_PROB_PERCENTAGE)
         self.max_exposed_days = int(PathologySettings.MAX_EXPOSED_DAYS)
@@ -61,14 +60,10 @@ class PathologyABC(ABC):
         """
 
     def __str__(self):
-        return f'Pathology({self.state})'
+        return f'Pathology({self.days_settled})'
 
 
 class NullPathology(PathologyABC):
-
-    def __init__(self, subject: Subject):
-        super().__init__(subject)
-        self.state = PathologyState.SUSCETIBLE
 
     def infect(self, subject: Subject) -> bool:
         return False
@@ -85,7 +80,7 @@ class ConcretePathology(PathologyABC):
     def infect(self, subject: Subject) -> bool:
         if self.should_be_infected(subject):
             subject.disease = ConcretePathology(subject)
-            subject.state = SubjectState.SICK
+            subject.state = SubjectState.EXPOSED
             return True
         return False
 
@@ -103,20 +98,15 @@ class ConcretePathology(PathologyABC):
             Probability of be infected
         """
 
-        if self.state != PathologyState.INFECTIOUS or \
-                subject.state in (SubjectState.SICK, SubjectState.DEAD):
-            return False
-
         # TODO: consider vaccine
-        if random.random() <= self.infection_prob_percentage:
-            return True
-
+        if self.subject.state == SubjectState.INFECTIOUS and subject.state == SubjectState.NORMAL:
+            if random.random() <= self.infection_prob_percentage:
+                return True
         return False
 
     def kill(self) -> bool:
         if self.should_be_dead():
             self.subject.state = SubjectState.DEAD
-            self.state = PathologyState.REMOVED
             return True
         return False
 
@@ -131,14 +121,10 @@ class ConcretePathology(PathologyABC):
         """
 
         # TODO: consider vaccine
-        if self.subject.state in (SubjectState.OK, SubjectState.DEAD) or self.state == PathologyState.EXPOSED:
-            return False
-
-        prob = (self.subject.age * self.death_prob_percentage) / SubjectSettings.LIFE_EXPECTANCY  # considering that people only live 100 years
-
-        if random.random() <= prob:
-            return True
-
+        if self.subject.state in (SubjectState.EXPOSED, SubjectState.INFECTIOUS):
+            prob = (self.subject.age * self.death_prob_percentage) / SubjectSettings.LIFE_EXPECTANCY  # considering that people only live 100 years
+            if random.random() <= prob:
+                return True
         return False
 
     def progress(self):
@@ -146,13 +132,14 @@ class ConcretePathology(PathologyABC):
 
         self.days_settled += 1
 
-        if self.subject.state == SubjectState.SICK and self.days_settled > 1:
+        # can only kill a subject if it have more then 1 day with the pathology
+        if self.days_settled > 1 and self.subject.state in (SubjectState.EXPOSED, SubjectState.INFECTIOUS):
             self.kill()
         else:
             return
 
-        if self.state == PathologyState.EXPOSED and self.days_settled >= self.max_exposed_days:
-            self.state = PathologyState.INFECTIOUS
-        if self.state == PathologyState.INFECTIOUS and self.days_settled >= self.max_infectious_days:
-            self.state = PathologyState.REMOVED
-            self.subject.state = SubjectState.OK
+        # pathology evolving
+        if self.subject.state == SubjectState.EXPOSED and self.days_settled > self.max_exposed_days:
+            self.subject.state = SubjectState.INFECTIOUS
+        elif self.subject.state == SubjectState.INFECTIOUS and self.days_settled > self.max_infectious_days:
+            self.subject.state = SubjectState.HEALED
