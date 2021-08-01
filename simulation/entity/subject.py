@@ -27,15 +27,16 @@ class Subject:
             self.disease.infect(subject)
 
     def draw(self):
-        if self.disease.state == PathologyState.SUSCETIBLE:
+        if self.state == SubjectState.OK:
+            if self.disease.state == PathologyState.REMOVED:
+                return DrawColors.HEALED
             return DrawColors.NORMAL
-        elif self.disease.state == PathologyState.EXPOSED:
-            return DrawColors.EXPOSED
-        elif self.disease.state == PathologyState.INFECTIOUS:
-            return DrawColors.INFECTIOUS
-        elif self.disease.state == PathologyState.REMOVED:
-            return DrawColors.HEALED
-        else:
+        elif self.state == SubjectState.SICK:
+            if self.disease.state == PathologyState.EXPOSED:
+                return DrawColors.EXPOSED
+            elif self.disease.state == PathologyState.INFECTIOUS:
+                return DrawColors.INFECTIOUS
+        elif self.state == SubjectState.DEAD:
             return DrawColors.DEAD
 
     def __str__(self):

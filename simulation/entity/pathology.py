@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 
 
 class PathologyABC(ABC):
-    _days_settled: int = 0
 
     def __init__(self, subject: Subject):
         self.subject = subject
@@ -21,6 +20,8 @@ class PathologyABC(ABC):
         self.death_prob_percentage = float(PathologySettings.DEATH_PROB_PERCENTAGE)
         self.max_exposed_days = int(PathologySettings.MAX_EXPOSED_DAYS)
         self.max_infectious_days = int(PathologySettings.MAX_INFECTIOUS_DAYS)
+
+        self.days_settled: int = 0
 
     @abstractmethod
     def infect(self, subject: Subject) -> bool:
@@ -103,8 +104,7 @@ class ConcretePathology(PathologyABC):
         """
 
         if self.state != PathologyState.INFECTIOUS or \
-                subject.state in (SubjectState.SICK, SubjectState.DEAD) or \
-                subject.disease.state != PathologyState.SUSCETIBLE:
+                subject.state in (SubjectState.SICK, SubjectState.DEAD):
             return False
 
         # TODO: consider vaccine
@@ -131,7 +131,7 @@ class ConcretePathology(PathologyABC):
         """
 
         # TODO: consider vaccine
-        if self.subject.state in (SubjectState.OK, SubjectState.DEAD) or self.subject.disease.state == PathologyState.SUSCETIBLE:
+        if self.subject.state in (SubjectState.OK, SubjectState.DEAD) or self.state == PathologyState.EXPOSED:
             return False
 
         prob = (self.subject.age * self.death_prob_percentage) / SubjectSettings.LIFE_EXPECTANCY  # considering that people only live 100 years
@@ -144,6 +144,15 @@ class ConcretePathology(PathologyABC):
     def progress(self):
         """Consider one day was passed. Evolve pathology"""
 
-        if self.subject.state == SubjectState.SICK:
-            self._days_settled += 1
+        self.days_settled += 1
+
+        if self.subject.state == SubjectState.SICK and self.days_settled > 1:
             self.kill()
+        else:
+            return
+
+        if self.state == PathologyState.EXPOSED and self.days_settled >= self.max_exposed_days:
+            self.state = PathologyState.INFECTIOUS
+        if self.state == PathologyState.INFECTIOUS and self.days_settled >= self.max_infectious_days:
+            self.state = PathologyState.REMOVED
+            self.subject.state = SubjectState.OK

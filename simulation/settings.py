@@ -10,7 +10,7 @@ class SystemSettings:
 
 class PathologySettings:
     INFECTION_PROB_PERCENTAGE: float = 0.15
-    DEATH_PROB_PERCENTAGE: float = 0.03
+    DEATH_PROB_PERCENTAGE: float = 1
     MAX_EXPOSED_DAYS: float = 6
     MAX_INFECTIOUS_DAYS: float = 14
 

@@ -36,19 +36,35 @@ class Time:
         draw_board = draw_board.reshape((self.dimension, self.dimension, 3))
         draw_board = draw_board.astype(np.uint8)
 
-        plt.imsave(f'{SystemSettings.IMAGE_OUTPUT_PATH}/{self.current_time:0<5}.png', draw_board)
+        plt.imshow(draw_board)
+        # plt.imsave(f'{SystemSettings.IMAGE_OUTPUT_PATH}/{self.current_time:0<5}.png', draw_board)
         return draw_board
 
-    def filter_infectious(self) -> list:
-        return list(filter(lambda subject: subject.disease.state == PathologyState.INFECTIOUS, self.board))
+    def filter_exposed(self) -> list:
+        return list(filter(lambda subject: subject.disease.state in (PathologyState.EXPOSED, PathologyState.INFECTIOUS), self.board))
 
-    def process(self):
-        while self.filter_infectious():
+    def get_neighbours(self, index: int) -> list:
+        board_2d = self.board.reshape((self.dimension, self.dimension))
+        x = index % self.dimension
+        y = index // self.dimension
+
+        # Algorithm from https://stackoverflow.com/questions/51657128/how-to-access-the-adjacent-cells-of-each-elements-of-matrix-in-python
+        neighbours = np.concatenate(list(row[y - (y > 0): y + 2]
+                                         for row in board_2d[x - (x > 0):x + 2]))
+        neighbours = neighbours.tolist()
+        neighbours.remove(board_2d[x][y])  # noqa
+        return neighbours  # noqa
+
+    def progress(self):
+        while self.filter_exposed():
             self.current_time += 1
-
-            # TODO: call subject and pathology process method
-
             self.draw()
+
+            for index, subject in enumerate(self.board):
+                neighbours = self.get_neighbours(index)
+                subject.contact(neighbours)
+                subject.disease.progress()
+        self.draw()
 
     def __enter__(self) -> 'Time':
         return self
