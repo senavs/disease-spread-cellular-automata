@@ -4,6 +4,8 @@ from uuid import uuid4
 
 class SystemSettings:
     IMAGE_OUTPUT_PATH: str = f'outputs/{uuid4()}'
+    IMAGE_OUTPUT_RESOLUTION: tuple = (800, 800)
+    IMAGE_OUTPUT_DPI: int = 96
 
     os.makedirs(IMAGE_OUTPUT_PATH, exist_ok=True)
 
