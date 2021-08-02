@@ -29,6 +29,9 @@ class Subject:
     def draw(self):
         return draw_colors[self.state]
 
+    def __bool__(self):
+        return self.state in (SubjectState.EXPOSED, SubjectState.INFECTIOUS)
+
     def __str__(self):
         return f'Subject({self.id}, {self.age}, {self.state}, {self.disease})'
 

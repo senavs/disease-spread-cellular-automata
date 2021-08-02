@@ -65,7 +65,7 @@ class Time:
         return neighbours  # noqa
 
     def progress(self):
-        for _ in range(100):
+        while np.any(self.board):
             self.current_time += 1
             self.draw()
 
@@ -74,6 +74,7 @@ class Time:
                     neighbours = self.get_neighbours(x, y)
                     subject.contact(neighbours)
                     subject.disease.progress()
+        self.draw()
 
     def __enter__(self) -> 'Time':
         return self
