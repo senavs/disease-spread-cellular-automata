@@ -24,40 +24,15 @@ class PathologyABC(ABC):
 
     @abstractmethod
     def infect(self, subject: Subject) -> bool:
-        """Try to infect a subject
-
-        Parameters
-        ----------
-        subject : object
-            subject that will be infect (or not)
-
-        Returns
-        -------
-        bool
-            If the subject was infected
-        """
+        """Try to infect a subject"""
 
     @abstractmethod
     def kill(self) -> bool:
-        """Kill the subject with the disease
-
-        It should do:
-            - Set PathologyState to REMOVED
-            - Set SubjectState to DEAD
-
-        Returns
-        -------
-        bool
-            If the subject was killed
-        """
+        """Kill the subject with the disease"""
 
     @abstractmethod
     def progress(self):
-        """Consider one day was passed. Evolve pathology.
-
-        It should do:
-            - Set subject to OK if the disease passed the limit days and the subject still alive
-        """
+        """Consider one day was passed. Evolve pathology"""
 
     def __str__(self):
         return f'Pathology({self.days_settled})'
@@ -84,47 +59,10 @@ class ConcretePathology(PathologyABC):
             return True
         return False
 
-    def should_be_infected(self, subject: Subject) -> bool:
-        """Calculate probability of a subject be infected.
-        It should consider pathology probs and vaccine probs
-
-        Parameters
-        ----------
-        subject : object
-
-        Returns
-        -------
-        prob : bool
-            Probability of be infected
-        """
-
-        # TODO: consider vaccine
-        if self.subject.state == SubjectState.INFECTIOUS and subject.state == SubjectState.NORMAL:
-            if random.random() <= self.infection_prob_percentage:
-                return True
-        return False
-
     def kill(self) -> bool:
         if self.should_be_dead():
             self.subject.state = SubjectState.DEAD
             return True
-        return False
-
-    def should_be_dead(self) -> bool:
-        """Calculate probability of a subject be dead.
-        It should consider pathology probs, age and vaccine probs
-
-        Returns
-        -------
-        prob : bool
-            Probability of be dead
-        """
-
-        # TODO: consider vaccine
-        if self.subject.state in (SubjectState.EXPOSED, SubjectState.INFECTIOUS):
-            prob = (self.subject.age * self.death_prob_percentage) / SubjectSettings.LIFE_EXPECTANCY  # considering that people only live 100 years
-            if random.random() <= prob:
-                return True
         return False
 
     def progress(self):
@@ -143,3 +81,22 @@ class ConcretePathology(PathologyABC):
             self.subject.state = SubjectState.INFECTIOUS
         elif self.subject.state == SubjectState.INFECTIOUS and self.days_settled > self.max_infectious_days:
             self.subject.state = SubjectState.HEALED
+
+    def should_be_infected(self, subject: Subject) -> bool:
+        """Calculate probability of a subject be infected. It should consider pathology prob and vaccine prob"""
+
+        # TODO: consider vaccine
+        if self.subject.state == SubjectState.INFECTIOUS and subject.state == SubjectState.NORMAL:
+            if random.random() <= self.infection_prob_percentage:
+                return True
+        return False
+
+    def should_be_dead(self) -> bool:
+        """Calculate probability of a subject be dead. It should consider pathology probs, age and vaccine probs"""
+
+        # TODO: consider vaccine
+        if self.subject.state in (SubjectState.EXPOSED, SubjectState.INFECTIOUS):
+            prob = (self.subject.age * self.death_prob_percentage) / SubjectSettings.LIFE_EXPECTANCY  # considering that people only live 100 years
+            if random.random() <= prob:
+                return True
+        return False

@@ -21,15 +21,20 @@ class Subject:
         self.disease: PathologyABC = NullPathology(self)
 
     def contact(self, subjects: list['Subject']):
+        """Create contact with others subject and the disease try to infect all"""
+
         for subject in subjects:
             if subject == self:  # cannot contact with it self
                 continue
             self.disease.infect(subject)
 
     def draw(self):
+        """Return subject color based on status"""
+
         return draw_colors[self.state]
 
     def __bool__(self):
+        """True if subject is sick"""
         return self.state in (SubjectState.EXPOSED, SubjectState.INFECTIOUS)
 
     def __str__(self):
