@@ -79,7 +79,7 @@ class ConcretePathology(PathologyABC):
         # pathology evolving
         if self.subject.state == SubjectState.EXPOSED and self.days_settled > self.max_exposed_days:
             self.subject.state = SubjectState.INFECTIOUS
-        elif self.subject.state == SubjectState.INFECTIOUS and self.days_settled > self.max_infectious_days:
+        elif self.subject.state == SubjectState.INFECTIOUS and (self.days_settled - self.max_exposed_days) > self.max_infectious_days:
             self.subject.state = SubjectState.HEALED
 
     def should_be_infected(self, subject: Subject) -> bool:
