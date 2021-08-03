@@ -11,8 +11,6 @@ from simulation.entity.subject import Subject
 class Time:
     board: np.ndarray
     current_time: int = 0
-    figure: Figure
-    ax: SubplotBase
 
     def __init__(self):
         dimension = BoardSettings.DIMENSION
@@ -28,7 +26,7 @@ class Time:
         draw_board = np.array(func(self.board).tolist())
         draw_board = draw_board.astype(np.uint8)
 
-        img = self.ax.imshow(draw_board)
+        img = self.axis.imshow(draw_board)
         self.figure.savefig(f'{SystemSettings.IMAGE_OUTPUT_PATH}/{self.current_time:0>5}.png', bbox_inches='tight')
         return img
 
