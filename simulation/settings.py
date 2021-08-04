@@ -15,18 +15,18 @@ class PathologySettings:
     INFECTION_PROB_PERCENTAGE: float = 0.15
     DEATH_PROB_PERCENTAGE: float = 0.03
     MAX_EXPOSED_DAYS: float = 6
-    MAX_INFECTIOUS_DAYS: float = 14
+    MAX_INFECTIOUS_DAYS: float = 13
 
 
 class PreventionSettings:
-    VACCINE_INFECTION_PRO_PERCENTAGE: float = 0.1
+    VACCINE_INFECTION_PRO_PERCENTAGE: float = 1
     VACCINE_DEATH_PRO_PERCENTAGE: float = 0.01
     SOCIAL_ISOLATION_INFECTION_PRO_PERCENTAGE: float = 0.1
     SOCIAL_ISOLATION_DEATH_PRO_PERCENTAGE: float = 0.01
 
 
 class BoardSettings:
-    DIMENSION: int = 12
+    DIMENSION: int = 51
     SICK_SUBJECT_LOCATION: int = None  # None is the center. It's like board[4, 4] position (with board 9 dimension)
 
 

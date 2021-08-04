@@ -85,7 +85,7 @@ class ConcretePathology(PathologyABC):
     def should_be_infected(self, subject: Subject) -> bool:
         """Calculate probability of a subject be infected. It should consider pathology prob and vaccine prob"""
 
-        if self.subject.state == SubjectState.INFECTIOUS and subject.state == SubjectState.NORMAL:
+        if self.subject.state in (SubjectState.EXPOSED, SubjectState.INFECTIOUS) and subject.state == SubjectState.NORMAL:
             if random.random() <= self.infection_prob_percentage * self.subject.prevention.get_infection_prob():
                 return True
         return False
