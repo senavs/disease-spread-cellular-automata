@@ -53,7 +53,7 @@ class Board:
 
         neighbours: np.ndarray = np.concatenate(list(row[y - (y > 0): y + 2]
                                                      for row in self.board[x - (x > 0):x + 2]))
-        neighbours: list = neighbours.tolist()
+        neighbours: list = neighbours.tolist()  # noqa: tolist() return list and not object
         neighbours.remove(self.board[x][y])
         return neighbours
 
@@ -79,8 +79,8 @@ class Board:
 
         # https://stackoverflow.com/questions/18829472/why-does-plt-savefig-performance-decrease-when-calling-in-a-loop
         self.axis.cla()  # noqa: clear axis data to decrease figure.savefig time
-        self.axis.axis('off')
-        img = self.axis.imshow(draw_board)
+        self.axis.axis('off')  # noqa
+        img = self.axis.imshow(draw_board)  # noqa
 
         self.figure.savefig(
             f'{SystemSettings.IMAGE_OUTPUT_PATH}/{ProgressSettings.CURRENT_N_DAY:0>5}.png',

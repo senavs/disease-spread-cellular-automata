@@ -27,7 +27,7 @@ class Subject:
         """Create contact with others subject and the disease try to infect all"""
 
         for subject in subjects:
-            if subject == self:  # cannot contact with it self
+            if subject is self:  # cannot contact with it self
                 continue
             self.disease.infect(subject)
 

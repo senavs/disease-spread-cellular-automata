@@ -91,7 +91,7 @@ class ConcretePathology(PathologyABC):
         return False
 
     def should_be_dead(self) -> bool:
-        """Calculate probability of a subject be dead. It should consider pathology probs, age and vaccine probs"""
+        """Calculate probability of a subject be dead. It should consider pathology prob, age and vaccine prob"""
 
         if self.subject.state in (SubjectState.EXPOSED, SubjectState.INFECTIOUS):
             prob = (self.subject.age * self.death_prob_percentage) / SubjectSettings.LIFE_EXPECTANCY  # considering that people only live 100 years
