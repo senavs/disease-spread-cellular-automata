@@ -1,20 +1,24 @@
 import os
 from uuid import uuid4
 
+_uuid = uuid4()
+
 
 class SystemSettings:
-    IMAGE_OUTPUT_PATH: str = f'outputs/{uuid4()}'
+    IMAGE_OUTPUT_PATH: str = f'outputs/{_uuid}/images'
+    REPORT_OUTPUT_PATH: str = f'outputs/{_uuid}/reports'
     IMAGE_OUTPUT_RESOLUTION: tuple = (800, 800)
     IMAGE_OUTPUT_DPI: int = 96
 
     os.makedirs(IMAGE_OUTPUT_PATH, exist_ok=True)
+    os.makedirs(REPORT_OUTPUT_PATH, exist_ok=True)
 
 
 class PathologySettings:
     INFECTION_PROB_PERCENTAGE: float = 0.15
     DEATH_PROB_PERCENTAGE: float = 0.03
-    MAX_EXPOSED_DAYS: float = 6
-    MAX_INFECTIOUS_DAYS: float = 13
+    MAX_EXPOSED_DAYS: float = 7
+    MAX_INFECTIOUS_DAYS: float = 14
 
 
 class PreventionSettings:
@@ -25,7 +29,7 @@ class PreventionSettings:
 
 
 class BoardSettings:
-    DIMENSION: int = 51
+    DIMENSION: int = 81
     SICK_SUBJECT_LOCATION: int = None  # None is the center. It's like board[4, 4] position (with board 9 dimension)
 
 
