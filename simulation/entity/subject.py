@@ -42,7 +42,7 @@ class Subject:
     def draw(self):
         """Return subject color based on status"""
 
-        return draw_colors[self.state]
+        return draw_colors[self.state.value]
 
     def __bool__(self):
         """True if subject is sick"""
