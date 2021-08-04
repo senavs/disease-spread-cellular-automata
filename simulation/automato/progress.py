@@ -26,7 +26,7 @@ class Progress:
 
     @staticmethod
     def increase():
-        ProgressSettings.CURRENT_TIME.set(ProgressSettings.CURRENT_TIME.get() + 1)
+        ProgressSettings.CURRENT_N_DAY += 1
 
     def __enter__(self) -> 'Progress':
         return self

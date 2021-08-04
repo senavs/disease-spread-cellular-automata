@@ -31,7 +31,7 @@ class BoardSettings:
 
 
 class ProgressSettings:
-    CURRENT_TIME = ContextVar("CURRENT_TIME", default=0)
+    CURRENT_N_DAY: int = 0
 
 
 class SubjectSettings:

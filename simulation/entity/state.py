@@ -1,12 +1,12 @@
 from enum import Enum
 
 
-class SubjectState(str, Enum):
-    NORMAL: str = 'NORMAL'
-    EXPOSED: str = 'EXPOSED'
-    INFECTIOUS: str = 'INFECTIOUS'
-    HEALED: str = 'HEALED'
-    DEAD: str = 'DEAD'
+class SubjectState(Enum):
+    NORMAL = 'NORMAL'
+    EXPOSED = 'EXPOSED'
+    INFECTIOUS = 'INFECTIOUS'
+    HEALED = 'HEALED'
+    DEAD = 'DEAD'
 
 
 draw_colors = {

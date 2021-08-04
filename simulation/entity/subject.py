@@ -48,6 +48,9 @@ class Subject:
         """True if subject is sick"""
         return self.state in (SubjectState.EXPOSED, SubjectState.INFECTIOUS)
 
+    def __eq__(self, other: SubjectState):
+        return self.state == other
+
     def __str__(self):
         return f'Subject({self.id}, {self.age}, {self.state}, {self.disease})'
 

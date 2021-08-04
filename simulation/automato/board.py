@@ -66,6 +66,9 @@ class Board:
     def filter_health(self):
         return self.board[np.bool_(self.board) == False]  # noqa: it has to be '==' and not 'is'
 
+    def filter_by_state(self, state: SubjectState):
+        return self.board[np.equal(self.board, state)]
+
     def draw(self):
         """Draw board as figure"""
 
@@ -80,7 +83,7 @@ class Board:
         img = self.axis.imshow(draw_board)
 
         self.figure.savefig(
-            f'{SystemSettings.IMAGE_OUTPUT_PATH}/{ProgressSettings.CURRENT_TIME.get():0>5}.png',
+            f'{SystemSettings.IMAGE_OUTPUT_PATH}/{ProgressSettings.CURRENT_N_DAY:0>5}.png',
             bbox_inches='tight'
         )
 
