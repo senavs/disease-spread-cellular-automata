@@ -1,4 +1,5 @@
 import os
+from contextvars import ContextVar
 from uuid import uuid4
 
 
@@ -27,6 +28,10 @@ class PreventionSettings:
 class BoardSettings:
     DIMENSION: int = 12
     SICK_SUBJECT_LOCATION: int = None  # None is the center. It's like board[4, 4] position (with board 9 dimension)
+
+
+class ProgressSettings:
+    CURRENT_TIME = ContextVar("CURRENT_TIME", default=0)
 
 
 class SubjectSettings:

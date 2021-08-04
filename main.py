@@ -1,8 +1,8 @@
 import matplotlib
 
-from simulation.entity.time import Time
+from simulation.automato.progress import Progress
 
 matplotlib.use('Agg')
 
-with Time() as time:
-    time.progress()
+with Progress() as process:
+    process.progress()
